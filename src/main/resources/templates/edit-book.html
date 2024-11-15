@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Edit Book</title>
+</head>
+<body>
+<h1>Edit Book</h1>
+<form th:action="@{/books/edit}" method="post">
+  <label>ISBN:</label>
+  <input type="text" name="isbn" th:value="${book.isbn}" readonly/><br/>
+  <label>Title:</label>
+  <input type="text" name="title" th:value="${book.title}" required/><br/>
+  <label>Author:</label>
+  <input type="text" name="author" th:value="${book.author}" required/><br/>
+  <label>Publisher:</label>
+  <input type="text" name="publisher" th:value="${book.publisher}" required/><br/>
+  <label>Year Published:</label>
+  <input type="number" name="yearPublished" th:value="${book.yearPublished}" required/><br/>
+  <label>Genre:</label>
+  <input type="text" name="genre" th:value="${book.genre}" required/><br/>
+  <label>Available:</label>
+  <input type="checkbox" name="isAvailable" th:checked="${book.isAvailable}"/><br/>
+  <button type="submit">Update</button>
+</form>
+<a href="/books">Back to Book List</a>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="librarymanagement.repository.BookMapper">
+
+    <resultMap id="BookResultMap" type="librarymanagement.entity.Book">
+        <id property="isbn" column="isbn"/>
+        <result property="title" column="title"/>
+        <result property="author" column="author"/>
+        <result property="genre" column="genre"/>
+        <result property="publisher" column="publisher"/>
+        <result property="yearPublished" column="year_published"/>
+        <result property="isAvailable" column="is_available"/>
+    </resultMap>
+
+<!--    <select id="findAll" resultMap="BookResultMap">-->
+<!--        SELECT * FROM books;-->
+<!--    </select>-->
+
+    <select id="findAll" resultType="librarymanagement.entity.Book" resultMap="BookResultMap">
+        SELECT * FROM books LIMIT #{pageSize} OFFSET #{offset};
+    </select>
+
+    <select id="countBooks" resultType="long">
+        SELECT COUNT(*) FROM books;
+    </select>
+
+    <select id="findByIsbn" parameterType="string" resultMap="BookResultMap">
+        SELECT * FROM books WHERE isbn = #{isbn};
+    </select>
+
+    <insert id="insertBook" parameterType="librarymanagement.entity.Book" useGeneratedKeys="false" keyProperty="isbn">
+        INSERT INTO books (isbn, title, author, publisher, year_published, genre, is_available)
+        VALUES (#{isbn}, #{title}, #{author}, #{publisher}, #{yearPublished}, #{genre}, #{isAvailable});
+    </insert>
+
+    <update id="updateBook" parameterType="librarymanagement.entity.Book">
+        UPDATE books
+        SET title = #{title},
+            author = #{author},
+            publisher = #{publisher},
+            year_published = #{yearPublished},
+            genre = #{genre},
+            is_available = #{isAvailable}
+        WHERE isbn = #{isbn};
+    </update>
+
+    <delete id="deleteByIsbn" parameterType="string">
+        DELETE FROM books WHERE isbn = #{isbn};
+    </delete>
+</mapper>

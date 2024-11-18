@@ -29,7 +29,7 @@ public class BookController {
     @GetMapping
     public String listBooks(
             @RequestParam(defaultValue = "0") int page, // Số trang hiện tại (bắt đầu từ 0)
-            @RequestParam(defaultValue = "5") int size, // Số bản ghi trên mỗi trang
+            @RequestParam(defaultValue = "20") int size, // Số bản ghi trên mỗi trang
             Model model) {
 
         // Lấy danh sách sách theo phân trang

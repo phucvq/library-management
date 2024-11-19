@@ -1,14 +1,32 @@
 package librarymanagement.dto;
 
+import javax.validation.constraints.*;
 import java.util.Objects;
 
 public class BookDTO {
+
+    @NotBlank(message = "ISBN can not be blank")
+    @Size(max = 13, message = "ISBN must not exceed 13 characters")
     private String isbn;
+
+    @NotBlank(message = "Title can not be blank")
     private String title;
+
+    @NotBlank(message = "Author can not be blank")
     private String author;
+
+    @NotBlank(message = "Publisher cannot be blank")
     private String publisher;
+
+    @NotNull(message = "Year published cannot be null")
+    @Min(value = 1000, message = "Year published must be after 1000")
+    @Max(value = 2100, message = "Year published must be before 2100")
     private int yearPublished;
+
+    @NotBlank(message = "Genre cannot be blank")
     private String genre;
+
+    @NotNull(message = "Availability status cannot be null")
     private boolean isAvailable;
 
     // Constructors

@@ -45,8 +45,6 @@ public class BookController {
         return "books"; // Trả về file books.html trong thư mục templates
     }
 
-
-
     // Hiển thị form thêm sách
     @GetMapping("/add")
     public String showAddBookForm(Model model) {

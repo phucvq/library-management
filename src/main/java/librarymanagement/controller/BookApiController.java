@@ -8,11 +8,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @RestController
+@Validated
 @RequestMapping("/api/books")
 public class BookApiController {
 
@@ -34,7 +38,8 @@ public class BookApiController {
     }
 
     @GetMapping("/isbn/{isbn}")
-    public ResponseEntity<BookDTO> getBookByIsbn(@PathVariable String isbn) {
+    public ResponseEntity<BookDTO> getBookByIsbn(
+            @PathVariable @Size(max = 13, message = "ISBN must not exceed 13 characters") String isbn) {
         BookDTO book = bookService.getBookByIsbn(isbn);
         if (book != null) {
             return ResponseEntity.ok(book);
@@ -43,19 +48,22 @@ public class BookApiController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<BookDTO> createBook(@RequestBody BookDTO book) {
+    public ResponseEntity<BookDTO> createBook(@Valid @RequestBody BookDTO book) {
         bookService.addBook(book);
         return ResponseEntity.ok(book);
     }
 
     @PutMapping("update/{isbn}")
-    public ResponseEntity<BookDTO> updateBook(@PathVariable String isbn, @RequestBody BookDTO book) {
+    public ResponseEntity<BookDTO> updateBook(
+            @PathVariable @Size(max = 13, message = "ISBN must not exceed 13 characters") String isbn,
+            @Valid @RequestBody BookDTO book) {
         bookService.updateBook(isbn, book);
         return ResponseEntity.ok(book);
     }
 
     @DeleteMapping("delete/{isbn}")
-    public ResponseEntity<DeleteResponse> deleteBook(@PathVariable String isbn) {
+    public ResponseEntity<DeleteResponse> deleteBook(
+            @PathVariable @Size(max = 13, message = "ISBN must not exceed 13 characters") String isbn) {
         bookService.deleteBook(isbn);
         DeleteResponse response = new DeleteResponse(isbn, "Deleted book successfully");
         return ResponseEntity.ok(response);

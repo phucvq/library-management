@@ -2,5 +2,16 @@
 <project version="4">
   <component name="SqlDialectMappings">
     <file url="file://$PROJECT_DIR$/src/test/resources/setup.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/src/test/resources/sql/controller/setup_testAddBookApi.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/src/test/resources/sql/controller/setup_testDeleteBookApi.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/src/test/resources/sql/controller/setup_testGetAllBooksApi.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/src/test/resources/sql/controller/setup_testGetBookByIsbnApi.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/src/test/resources/sql/controller/setup_testUpdateBookApi.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/src/test/resources/sql/service/cleanup.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/src/test/resources/sql/service/setup_testAddBook.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/src/test/resources/sql/service/setup_testDeleteBook.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/src/test/resources/sql/service/setup_testGetAllBooks.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/src/test/resources/sql/service/setup_testGetBookByIsbn.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/src/test/resources/sql/service/setup_testUpdateBook.sql" dialect="GenericSQL" />
   </component>
 </project>

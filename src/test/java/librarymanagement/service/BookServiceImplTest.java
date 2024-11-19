@@ -10,16 +10,19 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.sql.DataSource;
+
+import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("test") // This notation is for using resources in test (h2 database)
-@Sql(scripts = "/setup.sql")
+//@Sql(scripts = "/setup.sql")
 class BookServiceImplTest {
 
     @Autowired
@@ -34,6 +37,7 @@ class BookServiceImplTest {
     }
 
     @Test
+    @Sql(scripts = "classpath:sql/service/setup_testGetAllBooks.sql")
     void testGetAllBooks() {
         Pageable pageable = PageRequest.of(0, 2); // Lấy trang đầu tiên, mỗi trang 2 bản ghi
         Page<BookDTO> books = bookService.getAllBooks(pageable);
@@ -44,6 +48,7 @@ class BookServiceImplTest {
     }
 
     @Test
+    @Sql(scripts = "classpath:sql/service/setup_testGetBookByIsbn.sql")
     void testGetBookByIsbn() {
         String isbn = "9780134685991";
         BookDTO book = bookService.getBookByIsbn(isbn);
@@ -54,6 +59,7 @@ class BookServiceImplTest {
     }
 
     @Test
+    @Sql(scripts = "classpath:sql/service/setup_testAddBook.sql")
     void testAddBook() {
         BookDTO newBook = new BookDTO();
         newBook.setIsbn("9780000000004");
@@ -72,6 +78,10 @@ class BookServiceImplTest {
     }
 
     @Test
+    @SqlGroup({
+            @Sql(scripts = "classpath:sql/service/setup_testUpdateBook.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+            @Sql(scripts = "classpath:sql/service/cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    })
     void testUpdateBook() {
         String isbn = "9780134685991";
         BookDTO updatedBook = new BookDTO();

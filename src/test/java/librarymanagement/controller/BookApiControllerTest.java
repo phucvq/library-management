@@ -19,7 +19,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
-@Sql(scripts = "/setup.sql")
 class BookApiControllerTest {
 
     @Autowired
@@ -34,6 +33,7 @@ class BookApiControllerTest {
     }
 
     @Test
+    @Sql(scripts = "classpath:sql/controller/setup_testGetAllBooksApi.sql")
     void testGetAllBooks() throws Exception {
         mockMvc.perform(get("/api/books")
                         .param("page", "0")
@@ -49,6 +49,7 @@ class BookApiControllerTest {
     }
 
     @Test
+    @Sql(scripts = "classpath:sql/controller/setup_testGetBookByIsbnApi.sql")
     void testGetBookByIsbn() throws Exception {
         mockMvc.perform(get("/api/books/isbn/9780134685991")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -58,6 +59,7 @@ class BookApiControllerTest {
     }
 
     @Test
+    @Sql(scripts = "classpath:sql/controller/setup_testAddBookApi.sql")
     void testCreateBook() throws Exception {
         mockMvc.perform(post("/api/books/create")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -78,6 +80,7 @@ class BookApiControllerTest {
     }
 
     @Test
+    @Sql(scripts = "classpath:sql/controller/setup_testDeleteBookApi.sql")
     void testDeleteBook() throws Exception {
         mockMvc.perform(delete("/api/books/delete/9780134685991")
                         .contentType(MediaType.APPLICATION_JSON))

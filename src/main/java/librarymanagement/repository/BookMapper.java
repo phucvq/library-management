@@ -12,6 +12,8 @@ public interface BookMapper {
 //    List<Book> findAll();
     List<Book> findAll(@Param("pageSize") int pageSize, @Param("offset") int offset);
 
+    List<Book> getAllBooks();
+
     //@Select("SELECT * FROM books WHERE isbn = #{isbn}")
     Book findByIsbn(String isbn);
 

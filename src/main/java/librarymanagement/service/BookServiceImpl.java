@@ -11,6 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,14 +26,73 @@ public class BookServiceImpl implements BookService {
         this.bookConverter = bookConverter;
     }
 
-//    @Override
-//    public List<BookDTO> getAllBooks() {
-//        List<Book> books = bookMapper.findAll();
-//        return books.stream()
-//                .map(bookConverter::convertToDto)
-//                .collect(Collectors.toList());
-//    }
+    /**
+     * These methods jus for testing advanced java technique
+     * 1. getAllBooks: filter, map, lambda,
+     * 2. getAllBooksGrouping: grouping
+     * 3. getAllBooksPublishedAfter: stream & filter
+     * 4. getAllBooksCountByPublisher: map & counting
+     * 5. searchBooks: filter using predicates
+     * 6. addBooks: lambda
+     * */
+    // Just demo for using filter and map
+    // Using lambda in the predicate
+    @Override
+    public List<BookDTO> getAllBooks(boolean onlyAvailable) {
+        List<Book> books = bookMapper.getAllBooks();
+        Predicate<Book> availableFilter = book -> !onlyAvailable || book.isAvailable();
+        return books.stream()
+                .filter(availableFilter)
+                .map(bookConverter::convertToDto)
+                .collect(Collectors.toList());
+    }
 
+    // Just demo for grouping
+    public Map<String, List<BookDTO>> groupBooksByGenre() {
+        List<Book> books = bookMapper.getAllBooks();
+        return books.stream()
+                .map(bookConverter::convertToDto)
+                .collect(Collectors.groupingBy(BookDTO::getGenre)); // Method reference
+    }
+
+    // filter
+    public List<BookDTO> findBooksPublishedAfter(int year) {
+        List<Book> books = bookMapper.getAllBooks();
+        // Using Stream API vandà Filter
+        return books.stream()
+                .filter(book -> book.getYearPublished() > year)
+                .map(bookConverter::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    // map & counting
+    public Map<String, Long> countBooksByPublisher() {
+        List<Book> books = bookMapper.getAllBooks();
+        // Using Stream API and Collectors.groupingBy with Collectors.counting
+        return books.stream()
+                .collect(Collectors.groupingBy(Book::getPublisher, Collectors.counting()));
+    }
+
+    // search book by predicate
+    public List<BookDTO> searchBooks(Predicate<Book> condition) {
+        List<Book> books = bookMapper.getAllBooks();
+        // Using Stream API and Predicate
+        return books.stream()
+                .filter(condition)
+                .map(bookConverter::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    // using lambda
+    public void addBooks(List<BookDTO> books) {
+        books.forEach(bookDto -> bookMapper.insertBook(bookConverter.convertToEntity(bookDto)));
+    }
+
+
+
+    /**
+    * These are API implementation
+    * */
     @Override
     public Page<BookDTO> getAllBooks(Pageable pageable) {
         int pageSize = pageable.getPageSize();

@@ -23,6 +23,10 @@
         SELECT * FROM books LIMIT #{pageSize} OFFSET #{offset};
     </select>
 
+    <select id="getAllBooks" resultType="librarymanagement.entity.Book" resultMap="BookResultMap">
+        SELECT * FROM books;
+    </select>
+
     <select id="countBooks" resultType="long">
         SELECT COUNT(*) FROM books;
     </select>

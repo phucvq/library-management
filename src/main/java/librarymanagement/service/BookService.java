@@ -24,5 +24,7 @@ public interface BookService {
     void addBook(BookDTO book);
     void updateBook(String isbn, BookDTO bookDto);
     void deleteBook(String isbn);
+    boolean isIsbnExists(String isbn);
+    String generateUniqueISBN();
     //List<BookDTO> search(@Param("keyword") String keyword);
 }

@@ -5,6 +5,7 @@ import librarymanagement.entity.Book;
 import librarymanagement.exception.ResourceNotFoundException;
 import librarymanagement.repository.BookMapper;
 import librarymanagement.util.BookConverter;
+import librarymanagement.util.ISBNGenerator;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -119,6 +120,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public void addBook(BookDTO bookDto) {
+        bookDto.setIsbn(generateUniqueISBN());
         Book book = bookConverter.convertToEntity(bookDto);
         bookMapper.insertBook(book);
     }
@@ -147,12 +149,16 @@ public class BookServiceImpl implements BookService {
         bookMapper.deleteByIsbn(isbn);
     }
 
-//    @Override
-//    public List<BookDTO> search(String keyword) {
-//        List<Book> books = bookMapper.search(keyword);
-//        return books.stream()
-//                .map(bookConverter::convertToDto)
-//                .collect(Collectors.toList());
-//    }
+    public boolean isIsbnExists(String isbn) {
+        return bookMapper.existsByIsbn(isbn);
+    }
+
+    public String generateUniqueISBN() {
+        String isbn;
+        do {
+            isbn = ISBNGenerator.generateISBN();
+        } while (isIsbnExists(isbn));
+        return isbn;
+    }
 }
 

@@ -29,5 +29,7 @@ public interface BookMapper {
 
     long countBooks();
 
+    boolean existsByIsbn(String isbn);
+
     //List<Book> search(@Param("keyword") String keyword);
 }

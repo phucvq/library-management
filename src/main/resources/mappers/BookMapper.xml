@@ -54,4 +54,10 @@
     <delete id="deleteByIsbn" parameterType="string">
         DELETE FROM books WHERE isbn = #{isbn};
     </delete>
+
+    <select id="existsByIsbn" parameterType="string" resultType="boolean">
+        SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END
+        FROM books
+        WHERE isbn = #{isbn}
+    </select>
 </mapper>

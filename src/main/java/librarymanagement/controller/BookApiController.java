@@ -4,6 +4,7 @@ import librarymanagement.dto.BookDTO;
 import librarymanagement.dto.DeleteResponse;
 import librarymanagement.entity.Book;
 import librarymanagement.service.BookService;
+import librarymanagement.service.InventoryClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,6 +26,9 @@ public class BookApiController {
 
     @Autowired
     private BookService bookService;
+
+    @Autowired
+    private InventoryClient inventoryClient;
 
     /**
     * These methods jus for testing advanced java technique
@@ -117,6 +121,19 @@ public class BookApiController {
         DeleteResponse response = new DeleteResponse(isbn, "Deleted book successfully");
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/borrow/{isbn}")
+    public ResponseEntity<String> borrowBook(@PathVariable String isbn) {
+        int stock = inventoryClient.getStock(isbn); // Gọi Inventory Service
+        if (stock <= 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Book is out of stock");
+        }
+
+        inventoryClient.updateStock(isbn, stock - 1); // Giảm số lượng tồn kho
+        return ResponseEntity.ok("Book borrowed successfully");
+    }
+
 
 //    @GetMapping("search/{keyword}")
 //    public List<BookDTO> search(@PathVariable String keyword) {

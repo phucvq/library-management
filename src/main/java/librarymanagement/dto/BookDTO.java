@@ -29,6 +29,8 @@ public class BookDTO {
     @NotNull(message = "Availability status cannot be null")
     private boolean isAvailable;
 
+    private int stock; // Số lượng tồn kho (lấy từ Inventory Service)
+
     // Constructors
     public BookDTO() {
     }
@@ -41,6 +43,14 @@ public class BookDTO {
         this.yearPublished = yearPublished;
         this.genre = genre;
         this.isAvailable = isAvailable;
+    }
+
+    public int getStock() {
+        return stock;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
     }
 
     // Getters and Setters

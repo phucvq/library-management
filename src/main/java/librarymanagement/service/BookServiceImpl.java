@@ -21,10 +21,12 @@ public class BookServiceImpl implements BookService {
 
     private final BookMapper bookMapper;
     private final BookConverter bookConverter;
+    private final InventoryClient inventoryClient;
 
-    public BookServiceImpl(BookMapper bookMapper, BookConverter bookConverter) {
+    public BookServiceImpl(BookMapper bookMapper, BookConverter bookConverter, InventoryClient inventoryClient) {
         this.bookMapper = bookMapper;
         this.bookConverter = bookConverter;
+        this.inventoryClient = inventoryClient;
     }
 
     /**
@@ -38,15 +40,32 @@ public class BookServiceImpl implements BookService {
      * */
     // Just demo for using filter and map
     // Using lambda in the predicate
+//    @Override
+//    public List<BookDTO> getAllBooks(boolean onlyAvailable) {
+//        List<Book> books = bookMapper.getAllBooks();
+//        Predicate<Book> availableFilter = book -> !onlyAvailable || book.isAvailable();
+//        return books.stream()
+//                .filter(availableFilter)
+//                .map(bookConverter::convertToDto)  // Method reference
+//                .collect(Collectors.toList());
+//    }
     @Override
     public List<BookDTO> getAllBooks(boolean onlyAvailable) {
         List<Book> books = bookMapper.getAllBooks();
         Predicate<Book> availableFilter = book -> !onlyAvailable || book.isAvailable();
         return books.stream()
                 .filter(availableFilter)
-                .map(bookConverter::convertToDto)
+                .map(book -> {
+                    // Convert Book to BookDTO
+                    BookDTO bookDTO = bookConverter.convertToDto(book);
+                    //Get stock from Inventory Service
+                    int stock = inventoryClient.getStock(book.getISBN());
+                    bookDTO.setStock(stock);
+                    return bookDTO;
+                })
                 .collect(Collectors.toList());
     }
+
 
     // Just demo for grouping
     public Map<String, List<BookDTO>> groupBooksByGenre() {
@@ -109,12 +128,17 @@ public class BookServiceImpl implements BookService {
         );
     }
 
+
     @Override
     public BookDTO getBookByIsbn(String isbn) {
         Book book = bookMapper.findByIsbn(isbn);
         if (book == null) {
             throw new ResourceNotFoundException("Book not found with ISBN: " + isbn);
         }
+        int stock = inventoryClient.getStock(isbn); // Gọi Inventory Service
+
+        BookDTO bookDto = bookConverter.convertToDto(book);
+        bookDto.setStock(stock);
         return bookConverter.convertToDto(book);
     }
 
@@ -123,6 +147,7 @@ public class BookServiceImpl implements BookService {
         bookDto.setIsbn(generateUniqueISBN());
         Book book = bookConverter.convertToEntity(bookDto);
         bookMapper.insertBook(book);
+        inventoryClient.addStock(bookDto.getIsbn(), 10);
     }
 
     @Override
@@ -147,6 +172,12 @@ public class BookServiceImpl implements BookService {
             throw new ResourceNotFoundException("Book not found with ISBN: " + isbn);
         }
         bookMapper.deleteByIsbn(isbn);
+        int stock = inventoryClient.getStock(isbn);
+        if (stock >= 0) { // Nếu tồn tại trong Inventory Service
+            inventoryClient.updateStock(isbn, -1); // Đặt tồn kho về -1 để biểu thị sách đã xóa
+        } else {
+            System.err.println("ISBN not found in Inventory Service: " + isbn);
+        }
     }
 
     public boolean isIsbnExists(String isbn) {

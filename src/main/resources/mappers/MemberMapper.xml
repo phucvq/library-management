@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="librarymanagement.repository.MemberMapper">
+
+    <!-- ResultMap để ánh xạ các trường trong bảng members -->
+    <resultMap id="MemberResultMap" type="librarymanagement.entity.Member">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="email" column="email"/>
+        <result property="phone" column="phone"/>
+        <result property="membershipType" column="membership_type"/>
+        <result property="joinDate" column="join_date"/>
+        <result property="active" column="active"/>
+    </resultMap>
+
+    <!-- Sử dung if -->
+    <select id="getMembersByFilters" resultMap="MemberResultMap">
+        SELECT * FROM members WHERE 1=1
+        <if test="name != null and name != ''">
+            AND name LIKE CONCAT('%', #{name}, '%')
+        </if>
+        <if test="membershipType != null">
+            AND membership_type = #{membershipType}
+        </if>
+        <if test="active != null">
+            AND active = #{active}
+        </if>
+    </select>
+
+    <!--
+    <choose>: Đóng vai trò như if-else trong SQL động.
+    <when>: Kiểm tra điều kiện, nếu điều kiện đúng, nội dung trong thẻ sẽ được thực thi.Chỉ lấy điều kiện đầu tiên đúng.
+    <otherwise>: Mặc định thực thi nếu không có điều kiện nào trong <when> thỏa mãn
+    -->
+    <select id="getMembersByStatusOrType" resultMap="MemberResultMap">
+        SELECT * FROM members
+        <choose>
+            <when test="status != null">
+                WHERE active = #{status}
+            </when>
+            <when test="membershipType != null">
+                WHERE membership_type = #{membershipType}
+            </when>
+            <otherwise>
+                WHERE active = true
+            </otherwise>
+        </choose>
+    </select>
+
+<!--    foreach -->
+    <select id="getMembersByTypes" resultMap="MemberResultMap">
+        SELECT * FROM members WHERE membership_type IN
+        <foreach item="type" collection="types" open="(" separator="," close=")">
+            #{type}
+        </foreach>
+    </select>
+
+    <!-- Lấy tất cả thành viên, sử dụng GROUP BY để đếm số lượng theo membershipType -->
+    <select id="getMemberCountByType" resultType="map">
+        SELECT membership_type AS type, COUNT(*) AS count
+        FROM members
+        GROUP BY membership_type
+    </select>
+
+    <!-- Tìm thành viên với điều kiện CASE WHEN -->
+    <select id="getMembersByActivityStatus" resultMap="MemberResultMap">
+        SELECT id, name, email, phone, membership_type, join_date, active,
+               CASE
+                   WHEN active = true THEN 'Active'
+                   ELSE 'Inactive'
+                   END AS status
+        FROM members
+        WHERE active = #{status}
+    </select>
+
+
+
+        <!-- Tìm thành viên theo ngày gia nhập sau một ngày cụ thể// compare, date -->
+    <select id="getMembersJoinedAfter" resultMap="MemberResultMap">
+        SELECT * FROM members WHERE join_date > #{date}
+    </select>
+
+    <!-- Cập nhật membership_type với điều kiện chuỗi rỗng -->
+    <update id="updateMembershipTypeIfBlank">
+        UPDATE members SET membership_type = #{newType} WHERE TRIM(membership_type) = ''
+    </update>
+
+    <!-- Xóa thành viên nếu thời gian gia nhập trước một ngày cụ thể -->
+    <delete id="deleteMembersBeforeDate" parameterType="java.time.LocalDate">
+        DELETE FROM members WHERE join_date &lt; #{date} <!-- &lt; là dấu < -->
+    </delete>
+
+    <!-- Chèn thành viên mới -->
+    <insert id="insertMember" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO members (name, email, phone, membership_type, join_date, active)
+        VALUES (#{name}, #{email}, #{phone}, #{membershipType}, #{joinDate}, #{active})
+    </insert>
+
+    <!-- Lấy danh sách tất cả thành viên -->
+    <select id="getAllMembers" resultMap="MemberResultMap">
+        SELECT * FROM members
+    </select>
+</mapper>

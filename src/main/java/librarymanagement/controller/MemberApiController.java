@@ -4,6 +4,7 @@ import librarymanagement.entity.Member;
 import librarymanagement.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +17,12 @@ public class MemberApiController {
 
     @Autowired
     MemberService memberService;
+
+    @PostMapping("/add-members")
+    public ResponseEntity<List<Member>> addMember(@RequestBody List<Member> members) {
+        List<Member> membersAdded = memberService.batchInsertMembers(members);
+        return ResponseEntity.status(HttpStatus.CREATED).body(membersAdded);
+    }
 
     @GetMapping("/all-members")
     public ResponseEntity<List<Member>> getAllMembers() {

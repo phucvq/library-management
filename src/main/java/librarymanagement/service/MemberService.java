@@ -17,6 +17,17 @@ public class MemberService {
         this.memberMapper = memberMapper;
     }
 
+    // executeBatch
+    // return list member with status
+    public List<Member> batchInsertMembers(List<Member> members) {
+        memberMapper.batchInsertMembers(members);
+        members.forEach(member -> {
+            String status = member.isActive() ? "Active" : "Inactive";
+            member.setStatus(status);
+        });
+        return members;
+    }
+
     public List<Member> getMembersByFilters(String name, String membershipType, Boolean active) {
         return memberMapper.getMembersByFilters(name, membershipType, active);
     }

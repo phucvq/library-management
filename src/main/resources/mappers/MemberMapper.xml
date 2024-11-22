@@ -103,4 +103,13 @@
     <select id="getAllMembers" resultMap="MemberResultMap">
         SELECT * FROM members
     </select>
+
+    <!-- executeBatch -->
+    <insert id="batchInsertMembers" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO members (name, email, phone, membership_type, join_date, active)
+        VALUES
+        <foreach collection="members" item="member" separator=",">
+            (#{member.name}, #{member.email}, #{member.phone}, #{member.membershipType}, #{member.joinDate}, #{member.active})
+        </foreach>
+    </insert>
 </mapper>

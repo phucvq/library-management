@@ -16,11 +16,12 @@ public interface MemberMapper {
             @Param("active") Boolean active
     );
 
-
     List<Member> getMembersByStatusOrType(@Param("status") Boolean status,
                                           @Param("membershipType") String membershipType);
 
     List<Member> getMembersByTypes(@Param("types") List<String> types);
+
+    void batchInsertMembers(@Param("members") List<Member> members);
 
     List<Map<String, Object>> getMemberCountByType();
     List<Member> getMembersByActivityStatus(@Param("status") boolean status);

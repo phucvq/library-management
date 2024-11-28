@@ -124,14 +124,8 @@ public class BookApiController {
 
     @PostMapping("/borrow/{isbn}")
     public ResponseEntity<String> borrowBook(@PathVariable String isbn) {
-        int stock = inventoryClient.getStock(isbn); // Gọi Inventory Service
-        if (stock <= 0) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Book is out of stock");
-        }
-
-        inventoryClient.updateStock(isbn, stock - 1); // Giảm số lượng tồn kho
-        return ResponseEntity.ok("Book borrowed successfully");
+        String message = bookService.borrowBook(isbn);
+        return ResponseEntity.ok(message);
     }
 
 

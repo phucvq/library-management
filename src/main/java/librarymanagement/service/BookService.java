@@ -2,7 +2,6 @@ package librarymanagement.service;
 
 import librarymanagement.dto.BookDTO;
 import librarymanagement.entity.Book;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -19,6 +18,7 @@ public interface BookService {
     Map<String, Long> countBooksByPublisher();
     List<BookDTO> searchBooks(Predicate<Book> condition);
     void addBooks(List<BookDTO> books);
+    String borrowBook(String isbn);
 
     BookDTO getBookByIsbn(String isbn);
     void addBook(BookDTO book);

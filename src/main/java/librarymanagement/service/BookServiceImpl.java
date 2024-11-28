@@ -9,6 +9,8 @@ import librarymanagement.util.ISBNGenerator;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -108,7 +110,16 @@ public class BookServiceImpl implements BookService {
         books.forEach(bookDto -> bookMapper.insertBook(bookConverter.convertToEntity(bookDto)));
     }
 
+    @Override
+    public String borrowBook(String isbn) {
+        int stock = inventoryClient.getStock(isbn); // Gọi Inventory Service
+        if (stock <= 0) {
+            return "Book is out of stock";
+        }
 
+        inventoryClient.updateStock(isbn, stock - 1); // Giảm số lượng tồn kho
+        return "Book borrowed successfully";
+    }
 
     /**
     * These are API implementation
